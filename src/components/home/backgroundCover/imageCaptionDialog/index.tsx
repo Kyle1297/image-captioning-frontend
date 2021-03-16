@@ -7,9 +7,9 @@ import {
   DialogTitle, 
   Button,
   useMediaQuery,
-  useTheme,
 }  from '@material-ui/core';
-import ImageUploadButton from './imageUploadButton';
+import { createStyles, makeStyles, Theme, useTheme } from '@material-ui/core/styles';
+import ImageInput from './imageInput';
 import PrivacyRadioButtons from './privacyRadioButtons';
 import CollectionsAutocomplete from './collectionsAutocomplete';
 
@@ -19,12 +19,13 @@ interface Props {
   handleDialog: () => void;
 };
 
-const ImageUploadDialog: React.FC<Props> = ({ open, handleDialog }) => {
+const ImageCaptionDialog: React.FC<Props> = ({ open, handleDialog }) => {
   // check whether a fullscreen dialog is more appropriate for screensize
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('xs'));
 
-  // control form inputs
+  // access styles and control form inputs
+  const styles = useStyles();
   const [imageTitle, setImageTitle] = useState<string>("");
   
   // handle image title's vlaue
@@ -40,24 +41,32 @@ const ImageUploadDialog: React.FC<Props> = ({ open, handleDialog }) => {
         open={open} 
         fullWidth 
         onClose={handleDialog}
+        className={styles.dialog}
       >
         <DialogTitle>Upload and caption your image</DialogTitle>
         <DialogContent>
-          <PrivacyRadioButtons />
+          <div>
+            <PrivacyRadioButtons />
+          </div>
           <TextField
-            variant="standard"
+            size="small"
+            style={fullScreen ? { width: '100%' } : { width: '80%' }}
+            className={styles.text}
+            variant="outlined"
             label="Name"
             helperText="If empty, the image's filename will be used."
             onChange={handleTitleChange}
             value={imageTitle}
-            fullWidth
           />
           <CollectionsAutocomplete />
-          <ImageUploadButton />
+          <ImageInput />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDialog} color="primary">
             Cancel
+          </Button>
+          <Button onClick={handleDialog} color="primary">
+            Caption
           </Button>
         </DialogActions>
       </Dialog>
@@ -66,4 +75,22 @@ const ImageUploadDialog: React.FC<Props> = ({ open, handleDialog }) => {
 	);
 };
 
-export default ImageUploadDialog;
+// styles
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    dialog: {
+      display: 'block',
+      textAlign: 'center',
+      margin: 'auto',
+    },
+    text: {
+      marginTop: 20,
+      marginBottom: 30,
+      [`& fieldset`]: {
+        borderRadius: 25,
+      },
+    },
+  }),
+);
+
+export default ImageCaptionDialog;

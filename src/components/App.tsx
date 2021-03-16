@@ -1,12 +1,10 @@
 import React from 'react';
-import { Home } from './home';
-import NavBar from './layout/navBar';
+import Home from './home';
 
 
 const App: React.FC = () => {
   return (
     <div>
-      <NavBar />
       <Home />
     </div>
   );

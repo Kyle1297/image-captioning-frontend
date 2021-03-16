@@ -1,11 +1,17 @@
 import React from 'react';
-import BackgroundCover from './backgroundCover/index';
+import BackgroundCover from './backgroundCover';
+import ImagesGrid from './imagesGrid';
+import NavBar from '../layout/navBar';
 
 
-export const Home: React.FC = () => {
+const Home = () => {
   return (
     <div>
-        <BackgroundCover />
+      <NavBar />
+      <BackgroundCover />
+      <ImagesGrid />
     </div>
-  )
-}
+  );
+};
+
+export default Home;

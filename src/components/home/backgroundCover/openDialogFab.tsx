@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ImageUploadDialog from './imageUploadDialog';
+import ImageCaptionDialog from './imageCaptionDialog';
 import { createStyles, makeStyles, Theme, useTheme } from '@material-ui/core/styles';
 import { Fab, Typography, useMediaQuery } from '@material-ui/core';
 import BackupOutlinedIcon from '@material-ui/icons/Backup';
@@ -29,7 +29,7 @@ const OpenDialogFab: React.FC = () => {
           {smallScreen ? "Upload & Caption" : "Upload & Caption"}
         </Fab>
       </div>
-      <ImageUploadDialog 
+      <ImageCaptionDialog 
         open={open}  
         handleDialog={handleDialog} 
       />
