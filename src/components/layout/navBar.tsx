@@ -4,7 +4,7 @@ import { AppBar, Toolbar, Button, useMediaQuery, Grid, IconButton, useScrollTrig
 import MenuIcon from '@material-ui/icons/Menu';
 
 
-const NavBar: React.FC = () => {
+const NavBar = () => {
   // access style classes and detect scrolling
   const styles = useStyles();
   const scrollTrigger = useScrollTrigger();

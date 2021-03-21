@@ -37,7 +37,7 @@ const CollectionsAutocomplete: React.FC = () => {
 
 	// fetch collections
   useEffect(() => {
-		axios.get('http://localhost:8000/api_v1/collections/')
+		axios.get('http://localhost:8000/api_v1/images/collections/')
 			.then((response: AxiosResponse) => {
         // fetching complete
         setLoading(false);
@@ -65,9 +65,10 @@ const CollectionsAutocomplete: React.FC = () => {
     let data = {
       category: category,
     };
-    axios.post('http://localhost:8000/api_v1/collections/', data)
+    axios.post('http://localhost:8000/api_v1/images/collections/', data)
       .then((response: AxiosResponse) => {
         const newCollection = response.data;
+        console.log(response.data)
         setOptions([
           ...options, 
           {

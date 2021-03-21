@@ -1,27 +1,24 @@
-export const GET_CAPTION = 'GET_CAPTION';
+export const UPDATE_CAPTION = "UPDATE_CAPTION";
 
 
-// default image properties
 export interface Caption {
 	id: number;
-    text: string;
-    satisfactory: boolean;
-    corrected_text: string;
-    image?: string;
-    reviewer: number | null;
+  text: string;
+  satisfactory: boolean;
+  corrected_text: string;
+  image?: string;
 };
-
 
 // initial state
 export type CaptionState = {
-  caption: Caption;
-};
-
-
+    caption: Caption | null;
+  };
+  
+  
 // actions
-interface GetCaptionAction {
-  type: typeof GET_CAPTION;
+interface UpdateCaptionAction {
+  type: typeof UPDATE_CAPTION;
   payload: Caption;
 };
 
-export type CaptionActionTypes = GetCaptionAction
+export type CaptionActionTypes = UpdateCaptionAction

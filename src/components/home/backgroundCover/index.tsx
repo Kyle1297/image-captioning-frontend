@@ -1,9 +1,9 @@
 import React from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import './styles.css';
 import CoverText from './coverText';
 import OpenDialogFab from './openDialogFab';
-
+import { Grid } from '@material-ui/core';
+import './styles.css';
 
 const BackgroundCover: React.FC = () => {
   // access style classes
@@ -12,10 +12,14 @@ const BackgroundCover: React.FC = () => {
   return (
     <div className={styles.root}>
       <img className={styles.image} src="/homeImage.jpg" alt="" />
-      <div className={styles.content}>
-        <CoverText />
-        <OpenDialogFab />
-      </div>
+      <Grid container direction="column" justify="center" alignItems="center" className={styles.content}>
+        <Grid item>
+          <CoverText />
+        </Grid>
+        <Grid item>
+          <OpenDialogFab />
+        </Grid>
+      </Grid>
     </div>
   );
 };
@@ -49,7 +53,6 @@ const useStyles = makeStyles((theme: Theme) =>
       transform: 'translate(-50%, -50%)',
       color: '#FFFFFF',
       textAlign: 'center',
-      width: '82%',
     },
   }),
 );

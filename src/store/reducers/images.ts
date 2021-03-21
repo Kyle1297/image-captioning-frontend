@@ -1,29 +1,31 @@
 import { Reducer } from 'redux';
 import { 
-	GET_PUBLIC_IMAGES, 
-	GET_PRIVATE_IMAGES, 
+	GET_IMAGES,
 	ImagesState, 
 	ImagesActionTypes 
-} from '../types/images';
+} from '../types/image';
 
 
 const initialState: ImagesState = {
   images: [],
+  nextPage: null,
+  count: 0,
+  start: true,
 };
 
-export const imagesReducer: Reducer<ImagesState, ImagesActionTypes> = (state = initialState, action) => {
+const imagesReducer: Reducer<ImagesState, ImagesActionTypes> = (state = initialState, action) => {
 	switch (action.type) {
-		case GET_PUBLIC_IMAGES:
+		case GET_IMAGES:
 			return {
 				...state,
-				images: action.payload,
-			};
-		case GET_PRIVATE_IMAGES:
-			return {
-				...state,
-				images: action.payload,
+				images: [...state.images, ...action.payload.images],
+				nextPage: action.payload.nextPage,
+				count: action.payload.count,
+				start: false,
 			};
 		default:
 			return state;
 	};
 };
+
+export default imagesReducer;
