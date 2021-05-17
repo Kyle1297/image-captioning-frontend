@@ -1,18 +1,17 @@
-import { AxiosError } from 'axios';
-import { 
+import {
 	REQUEST_STARTED,
-	REQUEST_SUCCESS, 
+	REQUEST_SUCCESS,
 	REQUEST_ERROR,
+	ErrorMessage,
 } from '../types/request';
-
 
 interface RequestParams {
 	requestName: number;
-};
+}
 
 interface RequestErrorParams extends RequestParams {
-	error: AxiosError;
-};
+	error: ErrorMessage;
+}
 
 // REQUEST STARTED
 export const requestStarted = ({ requestName }: RequestParams) => ({

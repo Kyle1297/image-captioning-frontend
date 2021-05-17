@@ -1,50 +1,35 @@
 import { Dispatch } from 'redux';
 import { RequestEnums } from '../types/request';
 import { requestHelper, MethodTypes } from './actionUtils';
-import { 
+import {
 	GET_COLLECTIONS,
-	GET_COLLECTION, 
+	GET_COLLECTION,
 	CREATE_COLLECTION,
 	UPDATE_COLLECTION,
 	REMOVE_COLLECTION,
-	Collection, 
+	Collection,
+	CollectionFilters,
+	CollectionPost,
+	SET_COLLECTION,
+	EXTEND_COLLECTIONS,
 } from '../types/collection';
-import axios, { AxiosError, AxiosResponse } from 'axios';
-import { requestError, requestStarted, requestSuccess } from './request';
-
 
 const API_SERVER = process.env.REACT_APP_API_SERVER + '/images/collections';
 
-interface Filters {
-  page?: number;
-  is_main?: boolean;
-};
-
 // GET COLLECTIONS
-export const getCollections = (filters: Filters) => (dispatch: Dispatch) => {
-	const requestName = RequestEnums.getCollections;
-	dispatch(requestStarted({ 
-		requestName: requestName, 
-	}));
-	axios.get(`${API_SERVER}/`, {
-		params: filters,
-	})
-		.then((response: AxiosResponse) => {
-			dispatch(requestSuccess({ 
-				requestName: requestName,
-			}));
-			dispatch({
-				type: GET_COLLECTIONS,
-				payload: response.data,
-			});
-		})
-		.catch((error: AxiosError) => {
-			console.log(error)
-			dispatch(requestError({ 
-				requestName: requestName, 
-				error: error,
-			}));
-		});        
+export const getCollections = (filters: CollectionFilters = {}) => (
+	dispatch: Dispatch
+) => {
+	requestHelper({
+		dispatch: dispatch,
+		requestName: RequestEnums.getCollections,
+		actionType: GET_COLLECTIONS,
+		requestConfig: {
+			url: `${API_SERVER}/`,
+			method: MethodTypes.GET,
+			params: filters,
+		},
+	});
 };
 
 // GET COLLECTION
@@ -52,35 +37,42 @@ export const getCollection = (id: number) => (dispatch: Dispatch) => {
 	requestHelper({
 		dispatch: dispatch,
 		requestName: RequestEnums.getCollection,
-		requestURL: `${API_SERVER}/${id}/`,
-		requestMethod: MethodTypes.GET,
 		actionType: GET_COLLECTION,
-	});
-};
-
-// CREATE COLLECTION
-export const createCollection = (data: Collection) => (dispatch: Dispatch) => {
-	requestHelper({
-		dispatch: dispatch,
-		requestName: RequestEnums.createCollection,
-		requestURL: `${API_SERVER}/`,
-		requestMethod: MethodTypes.POST,
-		actionType: CREATE_COLLECTION,
-		requestParams: {
-			data: data,
+		requestConfig: {
+			url: `${API_SERVER}/${id}/`,
+			method: MethodTypes.GET,
 		},
 	});
 };
 
+// CREATE COLLECTION
+export const createCollection = (data: CollectionPost) => (
+	dispatch: Dispatch
+) => {
+	requestHelper({
+		dispatch: dispatch,
+		requestName: RequestEnums.createCollection,
+		actionType: CREATE_COLLECTION,
+		requestConfig: {
+			url: `${API_SERVER}/`,
+			method: MethodTypes.POST,
+			data: data,
+		},
+		extraAction: EXTEND_COLLECTIONS,
+	});
+};
+
 // UPDATE COLLECTION
-export const updateCollection = (id: number, data: Collection) => (dispatch: Dispatch) => {
+export const updateCollection = (id: number, data: Collection) => (
+	dispatch: Dispatch
+) => {
 	requestHelper({
 		dispatch: dispatch,
 		requestName: RequestEnums.updateCollection,
-		requestURL: `${API_SERVER}/${id}/`,
-		requestMethod: MethodTypes.PATCH,
 		actionType: UPDATE_COLLECTION,
-		requestParams: {
+		requestConfig: {
+			url: `${API_SERVER}/${id}/`,
+			method: MethodTypes.PATCH,
 			data: data,
 		},
 	});
@@ -91,8 +83,22 @@ export const removeCollection = (id: number) => (dispatch: Dispatch) => {
 	requestHelper({
 		dispatch: dispatch,
 		requestName: RequestEnums.removeCollection,
-		requestURL: `${API_SERVER}/${id}/`,
-		requestMethod: MethodTypes.DELETE,
 		actionType: REMOVE_COLLECTION,
+		requestConfig: {
+			url: `${API_SERVER}/${id}/`,
+			method: MethodTypes.DELETE,
+		},
 	});
 };
+
+// SET COLLECTION
+export const setCollection = (collection: Collection | null) => ({
+	type: SET_COLLECTION,
+	payload: collection,
+});
+
+// EXTEND COLLECTIONS
+export const extendCollections = (collection: Collection) => ({
+	type: EXTEND_COLLECTIONS,
+	payload: collection,
+});

@@ -1,30 +1,24 @@
 import { Reducer } from 'redux';
-import { 
-	GET_COMMENT, 
+import {
+	GET_COMMENT,
 	CREATE_COMMENT,
 	UPDATE_COMMENT,
 	REMOVE_COMMENT,
-	CommentState, 
-	CommentActionTypes, 
+	CommentState,
+	CommentActionTypes,
 } from '../types/comment';
 
-
 const initialState: CommentState = {
-  comment: null,
+	comment: null,
 };
 
-const commentReducer: Reducer<CommentState, CommentActionTypes> = (state = initialState, action) => {
+const commentReducer: Reducer<CommentState, CommentActionTypes> = (
+	state = initialState,
+	action
+) => {
 	switch (action.type) {
 		case GET_COMMENT:
-			return {
-				...state,
-				comment: action.payload,
-			};
 		case CREATE_COMMENT:
-			return {
-				...state,
-				comment: action.payload,
-			};
 		case UPDATE_COMMENT:
 			return {
 				...state,
@@ -37,7 +31,7 @@ const commentReducer: Reducer<CommentState, CommentActionTypes> = (state = initi
 			};
 		default:
 			return state;
-	};
+	}
 };
 
 export default commentReducer;

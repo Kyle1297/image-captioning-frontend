@@ -1,70 +1,67 @@
 import { Dispatch } from 'redux';
 import { RequestEnums } from '../types/request';
-import { requestHelper, MethodTypes } from './actionUtils';
-import { requestError, requestStarted, requestSuccess } from './request';
-import axios, { AxiosError, AxiosResponse } from 'axios';
-import { 
+import { requestHelper, MethodTypes, authRequestHeaders } from './actionUtils';
+import {
 	GET_IMAGES,
-	GET_IMAGE, 
+	GET_IMAGE,
 	UPLOAD_IMAGE,
 	UPDATE_IMAGE,
 	REMOVE_IMAGE,
 	SET_IMAGE,
-	Image, 
+	Image,
+	ImageFilters,
+	ImagePatch,
+	ImagePost,
+	CREATE_IMAGE,
+	SET_IMAGE_IN_IMAGES,
+	EXTEND_IMAGES,
+	ImagesState,
+	SET_IMAGE_FILTER,
 } from '../types/image';
-
+import axios, { AxiosError, AxiosResponse } from 'axios';
+import { requestError, requestStarted, requestSuccess } from './request';
+import { AppState } from '../reducers';
+import { SET_USER_IMAGE } from '../types/auth';
 
 const API_SERVER = process.env.REACT_APP_API_SERVER + '/images/images';
 
-interface Filters {
-  page?: number;
-  uploaded_at?: Date;
-  is_profile_image?: boolean;
-  is_private?: boolean;
-  user?: string;
-  collections__category?: string;
-  collections__is_main?: boolean;
-};
+export interface GetImagesParams {
+	filters: ImageFilters;
+	newFilter: boolean;
+}
 
 // GET IMAGES
-export const getImages = (filters: Filters) => (dispatch: Dispatch) => {
-	// signal start of call
-	const requestName = RequestEnums.getImages;
-	dispatch(requestStarted({ 
-		requestName: requestName, 
-	}));
+export const getImages = (
+	filters: ImageFilters,
+	newFilter: boolean = false
+) => (dispatch: Dispatch, getState: () => AppState) => {
+	// stringify collections array filter
+	if (filters.collections?.length)
+		filters = {
+			...filters,
+			collections: JSON.stringify(filters.collections),
+		};
+	else if (filters.collections) {
+		const { collections, ...rest } = filters;
+		filters = rest;
+	}
 
-	// fetch images
-	axios.get(`${API_SERVER}/`, {
-		params: filters,
-	})
-		.then((response: AxiosResponse) => {
-			// handle successful call
-			dispatch(requestSuccess({ 
-				requestName: requestName,
-			}));
+	// indicate new search
+	if (newFilter) dispatch(setImageFilter(newFilter));
 
-			// determine if another page of results exist and then dispatch
-			let nextPage = null;
-			if (response.data.next)
-				nextPage = response.data.next.match(/page=(\d+)/)[1]
-			dispatch({
-				type: GET_IMAGES,
-				payload: {
-          images: response.data.results,
-          nextPage: nextPage,
-					count: response.data.count,
-        },
-			});
-		})
-		.catch((error: AxiosError) => {
-			// handle unsuccessful call
-			console.log(error)
-			dispatch(requestError({ 
-				requestName: requestName, 
-				error: error,
-			}));
-		});                                                                                                                                                                                                     
+	// send request
+	requestHelper({
+		dispatch: dispatch,
+		requestName: RequestEnums.getImages,
+		actionType: GET_IMAGES,
+		requestConfig: {
+			url: `${API_SERVER}/`,
+			method: MethodTypes.GET,
+			headers: authRequestHeaders(getState().auth.token),
+			params: filters,
+		},
+		newFilter: newFilter,
+	});
 };
 
 // GET IMAGE
@@ -72,37 +69,105 @@ export const getImage = (uuid: string) => (dispatch: Dispatch) => {
 	requestHelper({
 		dispatch: dispatch,
 		requestName: RequestEnums.getImage,
-		requestURL: `${API_SERVER}/${uuid}/`,
-		requestMethod: MethodTypes.GET,
 		actionType: GET_IMAGE,
+		requestConfig: {
+			url: `${API_SERVER}/${uuid}/`,
+			method: MethodTypes.GET,
+		},
 	});
 };
 
 // CREATE IMAGE
-export const createImage = (data: Image) => (dispatch: Dispatch) => {
+export const createImage = (data: ImagePost) => (dispatch: Dispatch) => {
 	requestHelper({
 		dispatch: dispatch,
-		requestName: RequestEnums.uploadImage,
-		requestURL: `${API_SERVER}/`,
-		requestMethod: MethodTypes.POST,
-		actionType: UPLOAD_IMAGE,
-		requestParams: {
+		requestName: RequestEnums.createImage,
+		actionType: CREATE_IMAGE,
+		requestConfig: {
+			url: `${API_SERVER}/`,
+			method: MethodTypes.POST,
 			data: data,
 		},
+		extraAction: data.is_profile_image ? SET_USER_IMAGE : EXTEND_IMAGES,
 	});
 };
 
+// UPLOAD IMAGE
+export const uploadImage = (data: ImagePost) => (dispatch: Dispatch) => {
+	if (data.image) {
+		// signal start of request
+		const requestName = RequestEnums.uploadImage;
+		dispatch(
+			requestStarted({
+				requestName: requestName,
+			})
+		);
+
+		// retrieve presigned url for image upload to s3
+		axios
+			.get(`${process.env.REACT_APP_API_SERVER}/utils/presign-s3`, {
+				params: {
+					method: 'POST',
+					uuid: data.uuid,
+					file_type: data.type,
+					is_private: data.is_private,
+					is_profile_image: data.is_profile_image,
+				},
+			})
+			.then((response: AxiosResponse) => {
+				// handle image upload to s3
+				let postData = new FormData();
+				for (let key in response.data.signed_url.fields) {
+					postData.append(key, response.data.signed_url.fields[key]);
+				}
+				if (data.image) postData.append('file', data.image);
+				return axios.post(response.data.url, postData);
+			})
+			.then((response) => {
+				// handle successful call
+				dispatch(
+					requestSuccess({
+						requestName: requestName,
+					})
+				);
+				dispatch({
+					type: UPLOAD_IMAGE,
+				});
+
+				// create image, if profile picture
+				if (data.is_profile_image) {
+					const { image, ...rest } = data;
+					dispatch(createImage(rest) as any);
+				}
+			})
+			.catch((error: AxiosError) => {
+				// handle unsuccessful call
+				dispatch(
+					requestError({
+						requestName: requestName,
+						error: {
+							data: error.response?.data,
+						},
+					})
+				);
+			});
+	}
+};
+
 // UPDATE IMAGE
-export const updateImage = (uuid: string, data: Image) => (dispatch: Dispatch) => {
+export const updateImage = (uuid: string, data: ImagePatch) => (
+	dispatch: Dispatch
+) => {
 	requestHelper({
 		dispatch: dispatch,
 		requestName: RequestEnums.updateImage,
-		requestURL: `${API_SERVER}/${uuid}/`,
-		requestMethod: MethodTypes.PATCH,
 		actionType: UPDATE_IMAGE,
-		requestParams: {
+		requestConfig: {
+			url: `${API_SERVER}/${uuid}/`,
+			method: MethodTypes.PATCH,
 			data: data,
 		},
+		extraAction: SET_IMAGE_IN_IMAGES,
 	});
 };
 
@@ -111,9 +176,11 @@ export const removeImage = (uuid: string) => (dispatch: Dispatch) => {
 	requestHelper({
 		dispatch: dispatch,
 		requestName: RequestEnums.removeImage,
-		requestURL: `${API_SERVER}/${uuid}/`,
-		requestMethod: MethodTypes.DELETE,
 		actionType: REMOVE_IMAGE,
+		requestConfig: {
+			url: `${API_SERVER}/${uuid}/`,
+			method: MethodTypes.DELETE,
+		},
 	});
 };
 
@@ -121,4 +188,21 @@ export const removeImage = (uuid: string) => (dispatch: Dispatch) => {
 export const setImage = (image: Image) => ({
 	type: SET_IMAGE,
 	payload: image,
+});
+
+// SET IMAGE IN IMAGES
+export const setImageInImages = (image: Image) => ({
+	type: SET_IMAGE_IN_IMAGES,
+	payload: image,
+});
+
+// EXTEND IMAGES
+export const extendImages = (image: Image) => ({
+	type: EXTEND_IMAGES,
+	payload: image,
+});
+
+export const setImageFilter = (newFilter: ImagesState['newFilter']) => ({
+	type: SET_IMAGE_FILTER,
+	payload: newFilter,
 });

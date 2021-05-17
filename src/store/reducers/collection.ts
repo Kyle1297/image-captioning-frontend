@@ -1,31 +1,27 @@
 import { Reducer } from 'redux';
-import { 
-	GET_COLLECTION, 
+import {
+	GET_COLLECTION,
 	CREATE_COLLECTION,
 	UPDATE_COLLECTION,
 	REMOVE_COLLECTION,
-	CollectionState, 
-	CollectionActionTypes, 
+	CollectionState,
+	CollectionActionTypes,
+	SET_COLLECTION,
 } from '../types/collection';
 
-
 const initialState: CollectionState = {
-  collection: null,
+	collection: null,
 };
 
-const collectionReducer: Reducer<CollectionState, CollectionActionTypes> = (state = initialState, action) => {
+const collectionReducer: Reducer<CollectionState, CollectionActionTypes> = (
+	state = initialState,
+	action
+) => {
 	switch (action.type) {
 		case GET_COLLECTION:
-			return {
-				...state,
-				collection: action.payload,
-			};
 		case CREATE_COLLECTION:
-			return {
-				...state,
-				collection: action.payload,
-			};
 		case UPDATE_COLLECTION:
+		case SET_COLLECTION:
 			return {
 				...state,
 				collection: action.payload,
@@ -37,7 +33,7 @@ const collectionReducer: Reducer<CollectionState, CollectionActionTypes> = (stat
 			};
 		default:
 			return state;
-	};
+	}
 };
 
 export default collectionReducer;
