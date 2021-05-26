@@ -104,7 +104,7 @@ const HeaderMenu: React.FC<Props> = ({ account }) => {
 								label='Account settings'
 								setAnchorEl={setAnchorEl}
 							/>
-							<LoginButtons />
+							<LoginButtons setAnchorEl={setAnchorEl} />
 						</div>
 					) : (
 						''

@@ -57,7 +57,10 @@ const LoginForm: React.FC = () => {
 			dispatch(
 				setAlert({
 					severity: SeverityTypes.SUCCESS,
-					message: 'You were successfully logged in!',
+					message:
+						tab === TabNumbers.JOIN
+							? 'You have successfully joined us!'
+							: 'You were successfully logged in!',
 					open: true,
 					loading: null,
 				})
@@ -109,6 +112,11 @@ const LoginForm: React.FC = () => {
 					onReject={handleGoogleLoginFailure}
 				>
 					<SocialButton logo={LogoTypes.GOOGLE} />
+					<div className={styles.socialError}>
+						<Typography variant='caption' color='error'>
+							Currently unavailable
+						</Typography>
+					</div>
 				</LoginSocialGoogle>
 				<DividerText text='or' width={fullScreen ? '100%' : '80%'} />
 				<LoginFormFields />
@@ -145,6 +153,10 @@ const useStyles = makeStyles((theme: Theme) =>
 		},
 		terms: {
 			marginBottom: theme.spacing(1),
+		},
+		socialError: {
+			marginTop: -20,
+			marginBottom: 10,
 		},
 	})
 );

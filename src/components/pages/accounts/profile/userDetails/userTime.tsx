@@ -25,7 +25,7 @@ const UserTime: React.FC = () => {
 					<WatchLaterOutlined className={styles.icon} />
 				</Grid>
 				<Grid item>
-					{user ? (
+					{user && user?.username !== 'Anonymous' ? (
 						<DisplayTime
 							timestamp={user.date_joined}
 							prefix='Joined'

@@ -48,74 +48,78 @@ const ProfileTabs: React.FC = () => {
 
 	return publicUser ? (
 		<div className={styles.root}>
-			<Tabs
-				value={tab}
-				indicatorColor='primary'
-				textColor='primary'
-				variant='scrollable'
-				onChange={handleTabs}
-				ScrollButtonComponent={HideScrollButton}
-			>
-				<Tab
-					value={ProfileTabTypes.PUBLIC}
-					className={styles.tab}
-					label={
-						<TabIconLabel
-							count={publicUser.counts.public}
-							label={loggedUser?.id === publicUser.id ? 'Public' : 'Photos'}
-							Icon={Visibility}
-						/>
-					}
-				/>
-				{loggedUser?.id === publicUser.id ? (
+			{publicUser?.username !== 'Anonymous' ? (
+				<Tabs
+					value={tab}
+					indicatorColor='primary'
+					textColor='primary'
+					variant='scrollable'
+					onChange={handleTabs}
+					ScrollButtonComponent={HideScrollButton}
+				>
 					<Tab
-						value={ProfileTabTypes.PRIVATE}
+						value={ProfileTabTypes.PUBLIC}
 						className={styles.tab}
 						label={
 							<TabIconLabel
-								count={publicUser.counts.private}
-								label='Private'
-								Icon={VisibilityOff}
+								count={publicUser.counts.public}
+								label={loggedUser?.id === publicUser.id ? 'Public' : 'Photos'}
+								Icon={Visibility}
 							/>
 						}
 					/>
-				) : (
-					''
-				)}
-				<Tab
-					value={ProfileTabTypes.LIKED}
-					className={styles.tab}
-					label={
-						<TabIconLabel
-							count={publicUser.counts.liked}
-							label='Liked'
-							Icon={Favorite}
+					{loggedUser?.id === publicUser.id ? (
+						<Tab
+							value={ProfileTabTypes.PRIVATE}
+							className={styles.tab}
+							label={
+								<TabIconLabel
+									count={publicUser.counts.private}
+									label='Private'
+									Icon={VisibilityOff}
+								/>
+							}
 						/>
-					}
-				/>
-				<Tab
-					value={ProfileTabTypes.FOLLOWING}
-					className={styles.tab}
-					label={
-						<TabIconLabel
-							count={publicUser.profile.following.length}
-							label='Following'
-							Icon={RecordVoiceOver}
-						/>
-					}
-				/>
-				<Tab
-					value={ProfileTabTypes.FOLLOWERS}
-					className={styles.tab}
-					label={
-						<TabIconLabel
-							count={publicUser.profile.followers.length}
-							label='Followers'
-							Icon={Group}
-						/>
-					}
-				/>
-			</Tabs>
+					) : (
+						''
+					)}
+					<Tab
+						value={ProfileTabTypes.LIKED}
+						className={styles.tab}
+						label={
+							<TabIconLabel
+								count={publicUser.counts.liked}
+								label='Liked'
+								Icon={Favorite}
+							/>
+						}
+					/>
+					<Tab
+						value={ProfileTabTypes.FOLLOWING}
+						className={styles.tab}
+						label={
+							<TabIconLabel
+								count={publicUser.profile.following.length}
+								label='Following'
+								Icon={RecordVoiceOver}
+							/>
+						}
+					/>
+					<Tab
+						value={ProfileTabTypes.FOLLOWERS}
+						className={styles.tab}
+						label={
+							<TabIconLabel
+								count={publicUser.profile.followers.length}
+								label='Followers'
+								Icon={Group}
+							/>
+						}
+					/>
+				</Tabs>
+			) : (
+				''
+			)}
 			<Divider classes={{ root: styles.divider }} />
 			<TabContents tab={tab} />
 		</div>

@@ -113,7 +113,7 @@ const DiscoverButton: React.FC<Props> = ({ setGetParams, getParams, uuid }) => {
 	// add array for skeleton images/comments
 	const [skeletonArray, setSkeletonArray] = useState<any[]>([]);
 	useEffect(() => {
-		if (uuid) setSkeletonArray(Array.from(new Array(5)));
+		if (uuid) setSkeletonArray(Array.from(new Array(1)));
 		else if (width) setSkeletonArray(getSkeletonArray(width));
 	}, [width, uuid]);
 
@@ -166,8 +166,8 @@ const DiscoverButton: React.FC<Props> = ({ setGetParams, getParams, uuid }) => {
 				</Typography>
 			) : (
 				<DisplayMessage
-					message="That's all the images we have!"
-					type={MessageType.SAD}
+					message="That's all the images we could find!"
+					type={MessageType.ERROR}
 				/>
 			)}
 		</Grid>

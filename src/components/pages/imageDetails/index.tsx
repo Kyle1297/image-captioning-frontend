@@ -12,6 +12,7 @@ import { ImageState } from '../../../store/types/image';
 import CentralImageContents from './centralImageContents';
 import SideImageContents from './sideImageContents';
 import {
+	CircularProgress,
 	Container,
 	createStyles,
 	Grid,
@@ -22,7 +23,6 @@ import {
 	namedRequestError,
 	namedRequestsInProgress,
 } from '../../../store/selectors/request';
-import ImageDetailsSkeleton from '../../common/layout/skeletons/imageDetailsSkeleton';
 
 interface URLParams {
 	uuid: string;
@@ -79,7 +79,9 @@ const ImageDetails: React.FC = () => {
 					<SideImageContents />
 				</Grid>
 			) : (
-				<ImageDetailsSkeleton />
+				<div className={styles.centre}>
+					<CircularProgress />
+				</div>
 			)}
 		</Container>
 	);

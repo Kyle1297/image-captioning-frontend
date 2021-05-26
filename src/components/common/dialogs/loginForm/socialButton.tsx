@@ -33,6 +33,7 @@ const SocialButton: React.FC<Props> = ({ logo }) => {
 			classes={{ startIcon: styles.startIcon }}
 			variant='outlined'
 			startIcon={logo ? <FaFacebook /> : <FcGoogle />}
+			disabled
 		>
 			{smallScreen ? '' : 'Continue with '}
 			{logo ? 'Facebook' : 'Google'}

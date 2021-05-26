@@ -5,6 +5,7 @@ export const GET_USER = 'GET_USER';
 export const GET_PUBLIC_USER = 'GET_PUBLIC_USER';
 export const SET_PUBLIC_USER = 'SET_PUBLIC_USER';
 export const SET_USER_IMAGE = 'SET_USER_IMAGE';
+export const SET_USER_COUNT = 'SET_USER_COUNT';
 export const LOGIN_USER = 'LOGIN_USER';
 export const REGISTER_USER = 'REGISTER_USER';
 export const UPDATE_USER = 'UPDATE_USER';
@@ -99,6 +100,11 @@ interface SetUserImageAction {
 	payload: ProfileImage;
 }
 
+interface SetUserCountAction {
+	type: typeof SET_USER_COUNT;
+	payload: UserCounts;
+}
+
 interface LoginUserAction {
 	type: typeof LOGIN_USER;
 	payload: {
@@ -142,4 +148,5 @@ export type AuthActionTypes =
 	| AuthErrorAction
 	| GetPublicUserAction
 	| SetPublicUserAction
-	| SetUserImageAction;
+	| SetUserImageAction
+	| SetUserCountAction;

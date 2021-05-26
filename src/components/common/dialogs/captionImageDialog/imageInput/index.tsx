@@ -49,7 +49,7 @@ const ImageInput: React.FC<Props> = ({
 						);
 					else if (img.width < 1000 || img.height < 560)
 						setCaptionError(
-							'Unfortunately, only images greater than 1000x560 in size are accepted. Please try again.'
+							'Unfortunately, only images greater than 1000x560 pixels in size are accepted. Please try again.'
 						);
 					else setCaptionError('');
 				};

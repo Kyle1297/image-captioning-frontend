@@ -49,14 +49,20 @@ const UserDetails: React.FC = () => {
 							{user?.profile.bio
 								? user.profile.bio
 								: `Download free, beautifully captioned images curated by ${
-										user ? `@${user.username}` : 'our hidden gems'
+										user && user?.username !== 'Anonymous'
+											? `@${user.username}`
+											: 'our hidden gems'
 								  }.`}
 						</Typography>
 					</Grid>
 					<UserTime />
 					<UserInfo
 						Icon={Public}
-						contents={user ? user.profile.location : 'Everywhere'}
+						contents={
+							user && user?.username !== 'Anonymous'
+								? user.profile.location
+								: 'Everywhere'
+						}
 					/>
 					{user?.profile.interests ? (
 						<Grid item>

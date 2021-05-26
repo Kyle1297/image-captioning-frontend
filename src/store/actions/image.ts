@@ -31,38 +31,37 @@ export interface GetImagesParams {
 }
 
 // GET IMAGES
-export const getImages = (
-	filters: ImageFilters,
-	newFilter: boolean = false
-) => (dispatch: Dispatch, getState: () => AppState) => {
-	// stringify collections array filter
-	if (filters.collections?.length)
-		filters = {
-			...filters,
-			collections: JSON.stringify(filters.collections),
-		};
-	else if (filters.collections) {
-		const { collections, ...rest } = filters;
-		filters = rest;
-	}
+export const getImages =
+	(filters: ImageFilters, newFilter: boolean = false) =>
+	(dispatch: Dispatch, getState: () => AppState) => {
+		// stringify collections array filter
+		if (filters.collections?.length)
+			filters = {
+				...filters,
+				collections: JSON.stringify(filters.collections),
+			};
+		else if (filters.collections) {
+			const { collections, ...rest } = filters;
+			filters = rest;
+		}
 
-	// indicate new search
-	if (newFilter) dispatch(setImageFilter(newFilter));
+		// indicate new search
+		if (newFilter) dispatch(setImageFilter(newFilter));
 
-	// send request
-	requestHelper({
-		dispatch: dispatch,
-		requestName: RequestEnums.getImages,
-		actionType: GET_IMAGES,
-		requestConfig: {
-			url: `${API_SERVER}/`,
-			method: MethodTypes.GET,
-			headers: authRequestHeaders(getState().auth.token),
-			params: filters,
-		},
-		newFilter: newFilter,
-	});
-};
+		// send request
+		requestHelper({
+			dispatch: dispatch,
+			requestName: RequestEnums.getImages,
+			actionType: GET_IMAGES,
+			requestConfig: {
+				url: `${API_SERVER}/`,
+				method: MethodTypes.GET,
+				headers: authRequestHeaders(getState().auth.token),
+				params: filters,
+			},
+			newFilter: newFilter,
+		});
+	};
 
 // GET IMAGE
 export const getImage = (uuid: string) => (dispatch: Dispatch) => {
@@ -155,21 +154,21 @@ export const uploadImage = (data: ImagePost) => (dispatch: Dispatch) => {
 };
 
 // UPDATE IMAGE
-export const updateImage = (uuid: string, data: ImagePatch) => (
-	dispatch: Dispatch
-) => {
-	requestHelper({
-		dispatch: dispatch,
-		requestName: RequestEnums.updateImage,
-		actionType: UPDATE_IMAGE,
-		requestConfig: {
-			url: `${API_SERVER}/${uuid}/`,
-			method: MethodTypes.PATCH,
-			data: data,
-		},
-		extraAction: SET_IMAGE_IN_IMAGES,
-	});
-};
+export const updateImage =
+	(uuid: string, data: ImagePatch) => (dispatch: Dispatch) => {
+		requestHelper({
+			dispatch: dispatch,
+			requestName: RequestEnums.updateImage,
+			actionType: UPDATE_IMAGE,
+			requestConfig: {
+				url: `${API_SERVER}/${uuid}/`,
+				method: MethodTypes.PATCH,
+				data: data,
+			},
+			extraAction: SET_IMAGE_IN_IMAGES,
+			uuid: data.likes ? uuid : undefined,
+		});
+	};
 
 // REMOVE IMAGE
 export const removeImage = (uuid: string) => (dispatch: Dispatch) => {

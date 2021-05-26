@@ -2,7 +2,13 @@ import { Dispatch } from 'redux';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { AppActions, AppFilters, AppModels, AppPatch, AppPost } from '../types';
 import { requestStarted, requestSuccess, requestError } from './request';
-import { GET_IMAGES } from '../types/image';
+import {
+	CREATE_IMAGE,
+	GET_IMAGES,
+	Image,
+	ImagesState,
+	ImageState,
+} from '../types/image';
 import { GET_COMMENTS } from '../types/comment';
 import {
 	AUTH_ERROR,
@@ -15,7 +21,9 @@ import {
 	PublicUser,
 	SET_PUBLIC_USER,
 	SET_USER_IMAGE,
+	SET_USER_COUNT,
 } from '../types/auth';
+import store from '..';
 
 export enum MethodTypes {
 	GET = 'get',
@@ -45,6 +53,7 @@ interface Params {
 	newFilter?: boolean;
 	extraAction?: AppActions['type'];
 	publicUser?: PublicUser;
+	uuid?: Image['uuid'];
 }
 
 export const requestHelper = ({
@@ -55,6 +64,7 @@ export const requestHelper = ({
 	newFilter = false,
 	extraAction,
 	publicUser,
+	uuid,
 }: Params) => {
 	// signal start of request
 	dispatch(
@@ -72,6 +82,37 @@ export const requestHelper = ({
 					requestName: requestName,
 				})
 			);
+
+			// update user's liked count, if necessary
+			if (uuid) {
+				// determine initial image likes before image is updated
+				let prevLikes: null | number = null;
+				const currentLikes = response.data?.likes?.length;
+				const image = store.getState().image.image as ImageState['image'];
+				if (image?.uuid === uuid) {
+					prevLikes = image.likes.length;
+				} else {
+					const images = store.getState().images
+						.images as ImagesState['images'];
+					let currentImage = images.find((item) => item.uuid === uuid);
+					if (currentImage) prevLikes = currentImage.likes.length;
+				}
+
+				// calculate new user liked counts
+				const userCounts = store.getState().auth.user?.counts;
+				let newLikes = userCounts.liked;
+				if (userCounts && prevLikes !== null) {
+					if (currentLikes > prevLikes) newLikes += 1;
+					else if (currentLikes < prevLikes) newLikes -= 1;
+					dispatch({
+						type: SET_USER_COUNT,
+						payload: {
+							...userCounts,
+							liked: newLikes,
+						},
+					});
+				}
+			}
 
 			// DELETE
 			if (requestConfig.method === MethodTypes.DELETE) {
@@ -136,6 +177,30 @@ export const requestHelper = ({
 					type: SET_PUBLIC_USER,
 					payload: publicUser,
 				});
+			}
+
+			// update image uploaded counts, if necessary
+			if (actionType === CREATE_IMAGE) {
+				const image = response.data as Image;
+				let userCounts = store.getState().auth.user?.counts;
+
+				// ensure known uploader and captioned images, then update count accordingly
+				if (!image.is_profile_image && userCounts) {
+					if (image.is_private)
+						userCounts = {
+							...userCounts,
+							private: (userCounts.private += 1),
+						};
+					else
+						userCounts = {
+							...userCounts,
+							public: (userCounts.public += 1),
+						};
+					dispatch({
+						type: SET_USER_COUNT,
+						payload: userCounts,
+					});
+				}
 			}
 		})
 		.catch((error: AxiosError) => {

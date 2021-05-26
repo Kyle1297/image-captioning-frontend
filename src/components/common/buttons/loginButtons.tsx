@@ -1,4 +1,10 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, {
+	Dispatch,
+	Fragment,
+	SetStateAction,
+	useEffect,
+	useState,
+} from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import {
 	Button,
@@ -20,7 +26,11 @@ import { SeverityTypes } from '../../../store/types/alert';
 import { Request, RequestEnums } from '../../../store/types/request';
 import { namedRequestsInProgress } from '../../../store/selectors/request';
 
-const LoginButtons: React.FC = () => {
+interface Props {
+	setAnchorEl?: Dispatch<SetStateAction<null | HTMLElement>>;
+}
+
+const LoginButtons: React.FC<Props> = ({ setAnchorEl }) => {
 	// access styles
 	const styles = useStyles();
 	const smallScreen = useMediaQuery('(max-width: 500px)');
@@ -48,6 +58,7 @@ const LoginButtons: React.FC = () => {
 	// handle logout
 	const [logout, setLogout] = useState<boolean>(false);
 	const handleLogoutClick = () => {
+		if (setAnchorEl) setAnchorEl(null);
 		setLogout(true);
 		dispatch<any>(logoutUser());
 		dispatch(openLogin(false));

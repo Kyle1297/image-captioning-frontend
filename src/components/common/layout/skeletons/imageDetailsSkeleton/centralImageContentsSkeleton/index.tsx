@@ -18,7 +18,7 @@ const CentralImageDetailsSkeleton: React.FC = () => {
 	// access styles
 	const styles = useStyles();
 	const smallScreen = useMediaQuery('(max-width: 850px');
-	const skeletonArray = Array.from(new Array(5));
+	const skeletonArray = Array.from(new Array(1));
 
 	return (
 		<Grid item xs>

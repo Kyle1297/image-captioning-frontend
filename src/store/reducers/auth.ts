@@ -12,6 +12,7 @@ import {
 	GET_PUBLIC_USER,
 	SET_PUBLIC_USER,
 	SET_USER_IMAGE,
+	SET_USER_COUNT,
 } from '../types/auth';
 
 const initialState: AuthState = {
@@ -70,7 +71,18 @@ const authReducer: Reducer<AuthState, AuthActionTypes> = (
 						},
 					},
 				};
-			else return state;
+			return state;
+		case SET_USER_COUNT:
+			if (state.user) {
+				return {
+					...state,
+					user: {
+						...state.user,
+						counts: action.payload,
+					},
+				};
+			}
+			return state;
 		default:
 			return state;
 	}

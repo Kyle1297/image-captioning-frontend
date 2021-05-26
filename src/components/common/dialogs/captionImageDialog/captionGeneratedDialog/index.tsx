@@ -36,6 +36,8 @@ import { namedRequestError } from '../../../../../store/selectors/request';
 import RatingButton, { RatingButtons } from './ratingButton';
 import CaptionTextField from './captionTextField';
 import { setCaption } from '../../../../../store/actions/caption';
+import { Skeleton } from '@material-ui/lab';
+import useMeasure from 'react-use-measure';
 
 interface Props {
 	setImage: Dispatch<SetStateAction<ImagePost>>;
@@ -51,6 +53,7 @@ const CaptionGeneratedDialog: React.FC<Props> = ({
 	// check whether a fullscreen dialog is more appropriate for screensize
 	const styles = useStyles();
 	const theme = useTheme();
+	const [ref, { width }] = useMeasure();
 	const fullScreen = useMediaQuery(theme.breakpoints.down('xs'));
 
 	// retrieve image states
@@ -189,6 +192,10 @@ const CaptionGeneratedDialog: React.FC<Props> = ({
 		return () => clearTimeout(alertTimeout);
 	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+	// detect when image has loaded
+	const [imageLoaded, setImageLoaded] = useState<boolean>(false);
+	const handleImageLoad = () => setImageLoaded(true);
+
 	return image && image.uuid === imagePost.uuid ? (
 		<Dialog
 			fullScreen={fullScreen}
@@ -199,8 +206,24 @@ const CaptionGeneratedDialog: React.FC<Props> = ({
 			onClose={handleDialog}
 		>
 			<DialogTitle>Your Image is Ready!</DialogTitle>
-			<DialogContent>
-				<img src={image.image} alt={image.title} className={styles.image} />
+			<DialogContent ref={ref}>
+				<img
+					onLoad={handleImageLoad}
+					src={image.image}
+					alt={image.title}
+					className={styles.image}
+					style={imageLoaded ? {} : { display: 'none' }}
+				/>
+				{imageLoaded ? (
+					''
+				) : (
+					<Skeleton
+						animation='wave'
+						variant='circle'
+						width={width}
+						height={(image.height / image.width) * width}
+					/>
+				)}
 				<div
 					style={
 						fullScreen

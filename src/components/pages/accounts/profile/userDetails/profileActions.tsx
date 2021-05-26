@@ -40,7 +40,7 @@ const ProfileActions: React.FC = () => {
 			let loggedUserFollowingIds = loggedUser.profile.following.map(
 				(followingUser) => followingUser.id
 			);
-			let publicUserFollowers = publicUser.profile.following;
+			let publicUserFollowers = publicUser.profile.followers;
 			dispatch(
 				updateUser(
 					{
@@ -66,7 +66,10 @@ const ProfileActions: React.FC = () => {
 
 	return (
 		<Grid item className={styles.root}>
-			{publicUser && loggedUser ? (
+			{publicUser &&
+			loggedUser &&
+			publicUser.username !== 'Anonymous' &&
+			loggedUser.username !== 'Anonymous' ? (
 				publicUser.username === loggedUser.username ? (
 					<RedirectButton
 						url={`/account`}

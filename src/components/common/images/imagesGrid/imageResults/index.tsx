@@ -3,9 +3,9 @@ import { useSelector } from 'react-redux';
 import { Theme, createStyles, makeStyles } from '@material-ui/core/styles';
 import { RequestEnums, Request } from '../../../../../store/types/request';
 import { AppState } from '../../../../../store/reducers';
-import { Grid, useMediaQuery } from '@material-ui/core';
+import { Grid, Typography, useMediaQuery } from '@material-ui/core';
 import ImageCard from './imageCard';
-import { ImagesState } from '../../../../../store/types/image';
+import { ImagesState, ImageState } from '../../../../../store/types/image';
 import DisplayMessage, { MessageType } from '../../../layout/displayMessage';
 import DiscoverButton from '../../../buttons/discoverButton';
 import ImageCardSkeleton from '../../../layout/skeletons/imageCardSkeleton';
@@ -13,6 +13,7 @@ import { namedRequestError } from '../../../../../store/selectors/request';
 import getSkeletonArray from '../../../layout/skeletons/getSkeletonArray';
 import { GetImagesParams } from '../../../../../store/actions/image';
 import useMeasure from 'react-use-measure';
+import { ResizeObserver } from '@juggle/resize-observer';
 
 interface Props {
 	setGetParams?: Dispatch<SetStateAction<GetImagesParams>>;
@@ -30,10 +31,13 @@ const ImageResults: React.FC<Props> = ({
 	// access styles
 	const styles = useStyles();
 	const smallScreen = useMediaQuery('(max-width: 850px');
-	const [ref, { width }] = useMeasure();
+	const [ref, { width }] = useMeasure({ polyfill: ResizeObserver });
 
 	// retrieve images
-	const { images, newFilter } = useSelector<AppState, ImagesState>(
+	const singleImage = useSelector<AppState, ImageState['image']>(
+		(state) => state.image.image
+	);
+	const { images, count, newFilter } = useSelector<AppState, ImagesState>(
 		(state) => state.images
 	);
 	const error = useSelector<AppState, Request['error']>((state) =>
@@ -78,14 +82,29 @@ const ImageResults: React.FC<Props> = ({
 			) : images.length ? (
 				<Fragment>
 					<Grid container justify='center' alignItems='center' spacing={2}>
-						{images.map((item) => (
-							<ImageCard
-								key={item.uuid}
-								uuid={item.uuid}
-								small={relatedImages ? (smallScreen ? false : true) : undefined}
-								removeHover={removeHover}
-							/>
-						))}
+						{images.map((item) => {
+							if (relatedImages && singleImage?.uuid === item.uuid) {
+								return count > 1 ? null : (
+									<Typography
+										className={styles.noRelated}
+										variant='body1'
+										color='textSecondary'
+									>
+										No related images.
+									</Typography>
+								);
+							}
+							return (
+								<ImageCard
+									key={item.uuid}
+									uuid={item.uuid}
+									small={
+										relatedImages ? (smallScreen ? false : true) : undefined
+									}
+									removeHover={removeHover}
+								/>
+							);
+						})}
 					</Grid>
 					{relatedImages ? (
 						''
@@ -108,6 +127,9 @@ const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		skeletons: {
 			marginBottom: 15,
+		},
+		noRelated: {
+			marginTop: 15,
 		},
 	})
 );
