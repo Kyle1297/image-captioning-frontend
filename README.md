@@ -1,46 +1,67 @@
-# Getting Started with Create React App
+# CaptionAI
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A fullstack, computer vision and natural language processing web application that allows users, authenticated or otherwise, to automatically caption images and view them immediately online, either publicly or privately.
 
-## Available Scripts
+## General architecture
 
-In the project directory, you can run:
+This project has been separated into three separate repositories:
 
-### `npm start`
+- [frontend](https://github.com/Kyle1297/image-captioning-frontend)
+- [backend](https://github.com/Kyle1297/image-captioning-backend)
+- [image-captioning AI](https://github.com/Kyle1297/image-captioning-ai)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+It is currently hosted on AWS using serval services:
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- S3 -> to store media and static files, i.e. images, frontend and backend static files
+- lambda -> to run the image captioner (cost-effective, deployed as docker container, automatically triggered by image upload to S3 bucket). Soon, an image compression function will be added
+- ECR -> for storage of AI and backend docker containers
+- SNS -> used to capture result of the captioner lambda function and send back to server
+- EC2 -> single instance to host server
+- RDS -> to host postgres SQL database
+- CloudWatch -> to send lambda event trigger (every 15 minutes) to captioner lambda function to limit lambda cold starts
+- CloudFront -> content delivery network (CDN) to host and cache static content from S3 and link the backend api and admin
 
-### `npm test`
+### Frontend technologies
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- React with Typescript and Websockets
+- Redux -> state management
+- Material UI -> primary stylling library
+- GitHub Actions -> frontend CI for automated testing and deployment
 
-### `npm run build`
+### Backend technologies
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- Django (including Django Admin)
+- Django channels -> websockets for immediate capture of response (i.e. image caption) from SNS and the lambda captioner function
+- Docker-Compose and Docker - ease of deployment and robostness
+- Redis -> act as channel layer for websocket. Could also be used as cache
+- Nginx - reverse proxy
+- Daphne - to handle HTTP and Websocket connections (in future, will split with gunicorn)
+- Certbot - HTTPS config and automatic certificate renewals
+- Postgres - SQL database
+- GitHub Actions -> backend CI for automated testing and deployment
+- Poetry for dependency management
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Image caption AI infrastructure
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Essentially, an Attentive Transformer network is employed to build the model. There exists an encoder block with two sub-layers, a multi-head self-attention mechanism layer with a simple, position-wise fully-connected feed-forward network layer. The following decoder layer also employs multi-head attention.
 
-### `npm run eject`
+The model is also built off the Flickr8k database, currently having only been trained with a small subset of about 40000 images and captions. This is quite small and as such, the model only performs moderately well. If a larger database was used (including access to powerful GPUs), there would be a significant improvement in the results.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Key technologies and libraries utilised:
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- Attentive Transformer model
+- Docker-Compose and Docker - ease of deployment and robostness
+- Poetry for dependency management
+- Juptyer notebook, Python
+- Numpy, Keras, Tensorflow, Sklearn, nltk, matplotlib, pandas
+- Subset of the Flickr8k database -> around 40000 images and captions
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+* Large credits goes to [Tensorflow](https://www.tensorflow.org/tutorials/text/image_captioning)
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### Features to come
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+- Compress all images upon upload to S3 through lambda function
+- Add Kubernetes deployment config
+- Train AI model on much larger database
+- Set-up guest read-only AWS IAM credentials for external users
+- Split Daphne to only handle websocket while gunicorn handles HTT
