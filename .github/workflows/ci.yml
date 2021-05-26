@@ -49,6 +49,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-southeast-2
 
+      - name: fresh install of dependencies
+        run: npm ci
+
       - name: build
         run: npm run build
 
