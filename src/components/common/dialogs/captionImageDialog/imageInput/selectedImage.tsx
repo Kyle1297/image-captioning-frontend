@@ -62,6 +62,7 @@ const SelectedImage: React.FC<Props> = ({ image, setImage }) => {
 						''
 					) : (
 						<Skeleton
+							className={styles.avatar}
 							animation='wave'
 							variant='circle'
 							style={{ width: 40, height: 40 }}
