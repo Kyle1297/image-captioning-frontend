@@ -37,6 +37,11 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
     needs: [test]
+    env:
+      REACT_APP_API_SERVER: https://www.techwithkyle.com/api_v1
+      REACT_APP_WEBSOCKET_SERVER: wss://www.techwithkyle.com/ws/images
+      GOOGLE_CLIENT_KEY: ${{ secrets.GOOGLE_CLIENT_KEY }}
+      FACEBOOK_APP_KEY: ${{ secrets.FACEBOOK_APP_KEY }}
 
     steps:
       - name: checkout repository
