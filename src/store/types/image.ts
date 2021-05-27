@@ -4,6 +4,7 @@ import { Collection } from './collection';
 
 export const GET_IMAGES = 'GET_IMAGES';
 export const SET_IMAGE_IN_IMAGES = 'SET_IMAGE_IN_IMAGES';
+export const SET_CAPTION_IN_IMAGES = 'SET_CAPTION_IN_IMAGES';
 export const EXTEND_IMAGES = 'EXTEND_IMAGES';
 export const GET_IMAGE = 'GET_IMAGE';
 export const UPLOAD_IMAGE = 'UPLOAD_IMAGE';
@@ -137,6 +138,11 @@ interface SetImageInImagesAction {
 	payload: Image;
 }
 
+interface SetCaptionInImagesAction {
+	type: typeof SET_CAPTION_IN_IMAGES;
+	payload: Caption;
+}
+
 interface SetImageFilterAction {
 	type: typeof SET_IMAGE_FILTER;
 	payload: ImagesState['newFilter'];
@@ -146,6 +152,7 @@ export type ImagesActionTypes =
 	| GetImagesAction
 	| SetImageFilterAction
 	| SetImageInImagesAction
+	| SetCaptionInImagesAction
 	| ExtendImagesAction;
 
 export type ImageActionTypes =

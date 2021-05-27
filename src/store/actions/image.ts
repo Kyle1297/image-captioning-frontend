@@ -17,11 +17,13 @@ import {
 	EXTEND_IMAGES,
 	ImagesState,
 	SET_IMAGE_FILTER,
+	SET_CAPTION_IN_IMAGES,
 } from '../types/image';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { requestError, requestStarted, requestSuccess } from './request';
 import { AppState } from '../reducers';
 import { SET_USER_IMAGE } from '../types/auth';
+import { Caption } from '../types/caption';
 
 const API_SERVER = process.env.REACT_APP_API_SERVER + '/images/images';
 
@@ -193,6 +195,12 @@ export const setImage = (image: Image) => ({
 export const setImageInImages = (image: Image) => ({
 	type: SET_IMAGE_IN_IMAGES,
 	payload: image,
+});
+
+// SET CAPTION IN IMAGES
+export const setCaptionInImages = (caption: Caption) => ({
+	type: SET_CAPTION_IN_IMAGES,
+	payload: caption,
 });
 
 // EXTEND IMAGES

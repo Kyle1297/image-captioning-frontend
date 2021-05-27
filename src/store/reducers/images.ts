@@ -6,6 +6,7 @@ import {
 	SET_IMAGE_IN_IMAGES,
 	EXTEND_IMAGES,
 	SET_IMAGE_FILTER,
+	SET_CAPTION_IN_IMAGES,
 } from '../types/image';
 
 const initialState: ImagesState = {
@@ -43,6 +44,17 @@ const imagesReducer: Reducer<ImagesState, ImagesActionTypes> = (
 				images: state.images.map((image) => {
 					if (image.uuid === action.payload.uuid) return action.payload;
 					return image;
+				}),
+			};
+		case SET_CAPTION_IN_IMAGES:
+			return {
+				...state,
+				images: state.images.map((image) => {
+					if (image.caption.id === action.payload.id)
+						return {
+							...image,
+							caption: action.payload,
+						};
 				}),
 			};
 		case EXTEND_IMAGES:

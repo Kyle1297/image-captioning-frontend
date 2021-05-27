@@ -7,24 +7,25 @@ import {
 	Caption,
 	SET_CAPTION,
 } from '../types/caption';
+import { SET_CAPTION_IN_IMAGES } from '../types/image';
 
 const API_SERVER = process.env.REACT_APP_API_SERVER + '/images/captions';
 
 // UPDATE CAPTION
-export const updateCaption = (id: number, data: CaptionPatch) => (
-	dispatch: Dispatch
-) => {
-	requestHelper({
-		dispatch: dispatch,
-		requestName: RequestEnums.updateCaption,
-		actionType: UPDATE_CAPTION,
-		requestConfig: {
-			url: `${API_SERVER}/${id}/`,
-			method: MethodTypes.PATCH,
-			data: data,
-		},
-	});
-};
+export const updateCaption =
+	(id: number, data: CaptionPatch) => (dispatch: Dispatch) => {
+		requestHelper({
+			dispatch: dispatch,
+			requestName: RequestEnums.updateCaption,
+			actionType: UPDATE_CAPTION,
+			requestConfig: {
+				url: `${API_SERVER}/${id}/`,
+				method: MethodTypes.PATCH,
+				data: data,
+			},
+			extraAction: SET_CAPTION_IN_IMAGES,
+		});
+	};
 
 // SET CAPTION
 export const setCaption = (caption: Caption | null) => ({
