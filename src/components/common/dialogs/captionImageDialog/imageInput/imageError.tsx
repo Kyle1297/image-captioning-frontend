@@ -48,7 +48,7 @@ const ImageError: React.FC<Props> = ({
 					{!image.image ? '' : <FileDetails image={image.image} />}
 				</Grid>
 				<Grid item>
-					<IconButton size='small' onClick={handleError}>
+					<IconButton size='small' edge='end' onClick={handleError}>
 						<ClearIcon className={styles.icon} />
 					</IconButton>
 				</Grid>
@@ -67,11 +67,10 @@ const useStyles = makeStyles((theme: Theme) =>
 			backgroundColor: pink[100],
 			textAlign: 'justify',
 			marginTop: 30,
-			padding: '4px 8px',
+			padding: '4px 8px 4px 13px',
 		},
 		icon: {
 			fontSize: 14,
-			marginLeft: 10,
 		},
 		text: {
 			color: '#ff1744',

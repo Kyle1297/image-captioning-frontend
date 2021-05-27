@@ -1,9 +1,10 @@
-import React, { Dispatch, SetStateAction } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Avatar, Grid, IconButton } from '@material-ui/core';
 import ClearIcon from '@material-ui/icons/Clear';
 import FileDetails from './fileDetails';
 import { ImagePost } from '../../../../../store/types/image';
+import { Skeleton } from '@material-ui/lab';
 
 interface Props {
 	setImage: Dispatch<SetStateAction<ImagePost>>;
@@ -27,6 +28,10 @@ const SelectedImage: React.FC<Props> = ({ image, setImage }) => {
 		});
 	};
 
+	// detect when image has loaded
+	const [imageLoaded, setImageLoaded] = useState<boolean>(false);
+	const handleImageLoad = () => setImageLoaded(true);
+
 	return !image.image ? (
 		<div />
 	) : (
@@ -45,7 +50,23 @@ const SelectedImage: React.FC<Props> = ({ image, setImage }) => {
 					target='_blank'
 					rel='noreferrer'
 				>
-					<Avatar alt='image' className={styles.avatar} src={imageURL} />
+					<Avatar
+						alt='selected image'
+						onLoad={handleImageLoad}
+						onError={handleImageLoad}
+						className={styles.avatar}
+						src={imageURL}
+						style={imageLoaded ? {} : { display: 'none' }}
+					/>
+					{imageLoaded ? (
+						''
+					) : (
+						<Skeleton
+							animation='wave'
+							variant='circle'
+							style={{ width: 40, height: 40 }}
+						/>
+					)}
 				</a>
 			</Grid>
 			<Grid item container zeroMinWidth alignItems='center' wrap='nowrap'>
