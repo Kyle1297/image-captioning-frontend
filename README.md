@@ -8,12 +8,12 @@ This project has been separated into three separate repositories:
 
 - [frontend](https://github.com/Kyle1297/image-captioning-frontend)
 - [backend](https://github.com/Kyle1297/image-captioning-backend)
-- [image-captioning AI](https://github.com/Kyle1297/image-captioning-ai)
+- [image captioning AI](https://github.com/Kyle1297/image-captioning-ai)
 
 It is currently hosted on AWS using serval services:
 
 - S3 -> to store media and static files, i.e. images, frontend and backend static files
-- lambda -> to run the image captioner (cost-effective, deployed as docker container, automatically triggered by image upload to S3 bucket). Soon, an image compression function will be added
+- Lambda -> to run the image captioner (cost-effective, deployed as docker container, automatically triggered by image upload to S3 bucket). Soon, an image compression function will be added
 - ECR -> for storage of AI and backend docker containers
 - SNS -> used to capture result of the captioner lambda function and send back to server
 - EC2 -> single instance to host server
@@ -25,7 +25,7 @@ It is currently hosted on AWS using serval services:
 
 - React with Typescript and Websockets
 - Redux -> state management
-- Material UI -> primary stylling library
+- Material UI -> primary styling library
 - GitHub Actions -> frontend CI for automated testing and deployment
 
 ### Backend technologies
@@ -45,7 +45,7 @@ It is currently hosted on AWS using serval services:
 
 Essentially, an Attentive Transformer network is employed to build the model. There exists an encoder block with two sub-layers, a multi-head self-attention mechanism layer with a simple, position-wise fully-connected feed-forward network layer. The following decoder layer also employs multi-head attention.
 
-The model is also built off the Flickr8k database, currently having only been trained with a small subset of about 40000 images and captions. This is quite small and as such, the model only performs moderately well. If a larger database was used (including access to powerful GPUs), there would be a significant improvement in the results.
+The model is built off the Flickr8k database, currently having only been trained with a small subset of about 40000 images and captions. This is quite small and as such, the model only performs moderately well. If a larger database was used, there would be a significant improvement in the results.
 
 Key technologies and libraries utilised:
 
@@ -56,7 +56,7 @@ Key technologies and libraries utilised:
 - Numpy, Keras, Tensorflow, Sklearn, nltk, matplotlib, pandas
 - Subset of the Flickr8k database -> around 40000 images and captions
 
-* Large credits goes to [Tensorflow](https://www.tensorflow.org/tutorials/text/image_captioning)
+Large credits go to [Tensorflow](https://www.tensorflow.org/tutorials/text/image_captioning)
 
 ### Features to come
 
@@ -64,4 +64,5 @@ Key technologies and libraries utilised:
 - Add Kubernetes deployment config
 - Train AI model on much larger database
 - Set-up guest read-only AWS IAM credentials for external users
-- Split Daphne to only handle websocket while gunicorn handles HTT
+- Split Daphne to only handle websocket while gunicorn handles HTTP
+- More thorough testing
