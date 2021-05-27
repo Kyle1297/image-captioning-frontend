@@ -55,6 +55,7 @@ const imagesReducer: Reducer<ImagesState, ImagesActionTypes> = (
 							...image,
 							caption: action.payload,
 						};
+					return image;
 				}),
 			};
 		case EXTEND_IMAGES:
