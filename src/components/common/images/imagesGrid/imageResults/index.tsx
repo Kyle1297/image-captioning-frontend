@@ -46,7 +46,7 @@ const ImageResults: React.FC<Props> = ({
 
 	// add array for skeleton images
 	const skeletonArray = useMemo(
-		() => (relatedImages ? Array.from(new Array(5)) : getSkeletonArray(width)),
+		() => (relatedImages ? Array.from(new Array(1)) : getSkeletonArray(width)),
 		[width, relatedImages]
 	);
 

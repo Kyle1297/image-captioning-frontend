@@ -66,17 +66,19 @@ export const getImages =
 	};
 
 // GET IMAGE
-export const getImage = (uuid: string) => (dispatch: Dispatch) => {
-	requestHelper({
-		dispatch: dispatch,
-		requestName: RequestEnums.getImage,
-		actionType: GET_IMAGE,
-		requestConfig: {
-			url: `${API_SERVER}/${uuid}/`,
-			method: MethodTypes.GET,
-		},
-	});
-};
+export const getImage =
+	(uuid: string) => (dispatch: Dispatch, getState: () => AppState) => {
+		requestHelper({
+			dispatch: dispatch,
+			requestName: RequestEnums.getImage,
+			actionType: GET_IMAGE,
+			requestConfig: {
+				url: `${API_SERVER}/${uuid}/`,
+				method: MethodTypes.GET,
+				headers: authRequestHeaders(getState().auth.token),
+			},
+		});
+	};
 
 // CREATE IMAGE
 export const createImage = (data: ImagePost) => (dispatch: Dispatch) => {
