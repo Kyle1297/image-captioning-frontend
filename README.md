@@ -6,7 +6,7 @@ www.techwithkyle.com
 
 ## General architecture
 
-This project has been separated into three separate repositories:
+This project has been separated into three repositories:
 
 - [frontend](https://github.com/Kyle1297/image-captioning-frontend)
 - [backend](https://github.com/Kyle1297/image-captioning-backend)
