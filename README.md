@@ -16,12 +16,16 @@ It is currently hosted on AWS using the following services:
 
 - S3 -> to store media and static files, i.e. images, frontend and backend static files
 - Lambda -> to run the image captioner (cost-effective, deployed as docker container, automatically triggered by image upload to S3 bucket). Soon, an image compression function will be added
-- ECR -> for storage of AI and backend docker containers
 - SNS -> used to capture result of the captioner lambda function and send back to server
-- EC2 -> single instance to host server
 - RDS -> to host postgres SQL database
-- CloudWatch -> to send lambda event trigger (every 15 minutes) to captioner lambda function to limit lambda cold starts
+- ECR -> for storage of AI and backend docker containers
+- ECS -> deployment/container orchestration
+- EC2 -> single instance to host server, connected to ECS cluster and Elastic IP
+- Route 53 -> domain registration and DNS configuration
+- Systems Manager Parameter Store -> to securely store backend environment variables to assist with automatic deployment through ECS
+- CloudWatch -> for logs and to send lambda event trigger (every 15 minutes) to captioner lambda function to limit lambda cold starts
 - CloudFront -> content delivery network (CDN) to host and cache static content from S3 and link the backend api and admin
+- CloudFormation -> infrastructure as code
 
 ## Infrastructure and technologies
 
@@ -30,7 +34,7 @@ It is currently hosted on AWS using the following services:
 - React with Typescript and Websockets
 - Redux -> state management
 - Material UI -> primary styling library
-- GitHub Actions -> frontend CI for automated testing and deployment
+- GitHub Actions -> frontend CI for automated testing and deployment to S3
 
 ### Backend
 
@@ -42,7 +46,7 @@ It is currently hosted on AWS using the following services:
 - Daphne - to handle HTTP and Websocket connections (in future, will split with gunicorn)
 - Certbot - HTTPS config and automatic certificate renewals
 - Postgres - SQL database
-- GitHub Actions -> backend CI for automated testing and deployment
+- GitHub Actions -> backend CI for automated testing and deployment to ECS
 - Poetry for dependency management
 
 ### Image caption AI
@@ -100,18 +104,13 @@ Then, run 'npm run deploy' to build and deploy the frontend to your S3 bucket. Y
 
 #### Backend
 
-First, you will need to open the 'init-letsencrypt.sh' file and update the domains, email and staging fields on lines 8-12. Then, navigate to the prod/data/nginx/app.conf file and change all instances of 'techwithkyle.com' with your own domain.
+First, navigate to the prod/data/nginx/app.conf file and change all instances of 'techwithkyle.com' with your own domain. Next, run 'make prod-build' to build your backend containers, which can then be deployed to ECR. The 'aws ecr' commands in the provided Makefile will be helpful here.
 
-Next, run 'make prod-build' to build your backend containers, which can then be deployed to ECR. The 'aws ecr' commands in the provided Makefile will be helpful here.
-
-Following this, run 'make scp-transfer' using your EC2 instance's .pem file to transfer the relevant backend files to your server. Then, use 'make ssh-login' to log into the server. Here, you can update your server's packages, install docker-compose, pull your backend container from ECR, and run the 'init-letsencrypt.sh' file to generate a HTTPS certificate.
-
-Once successful, run 'docker-compose up -d' to start your production backend. Assuming AWS is configured correctly, your website should now be available on the internet at your specified domain.
+Then, use the provided guest IAM AWS account and above notes to correctly configure all the relevant AWS services, including CloudFront and ECS. Once deployed, your website should be accessible on the internet, at your specified domain, through HTTPS.
 
 ## Features to come
 
 - Compress all images upon upload to S3 through lambda function
-- Add Kubernetes deployment config
 - Train AI model on much larger database
 - Set-up guest read-only AWS IAM credentials for external users
 - Split Daphne to only handle websocket while gunicorn handles HTTP
