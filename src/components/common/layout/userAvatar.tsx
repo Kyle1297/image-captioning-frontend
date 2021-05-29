@@ -38,17 +38,17 @@ const UserAvatar: React.FC<Props> = ({ user, userType, noLink }) => {
 		if (user?.profile.image?.uuid) setImageLoaded(false);
 	}, [user?.profile.image?.uuid]);
 
-	return user ? (
+	return (
 		<Fragment>
 			<Link
-				to={`/users/${user.username}`}
+				to={`/users/${user?.username}`}
 				className={styles.link}
 				onClick={noLink ? handleNoLink : undefined}
 				style={noLink ? { pointerEvents: 'none' } : {}}
 			>
 				<Avatar
-					src={user.profile?.image?.image}
-					alt={user.username}
+					src={user?.profile?.image?.image}
+					alt={user?.username}
 					variant={userType === UserTypes.FOLLOWER ? 'rounded' : 'circular'}
 					onLoad={handleImageLoad}
 					onError={handleImageLoad}
@@ -115,8 +115,6 @@ const UserAvatar: React.FC<Props> = ({ user, userType, noLink }) => {
 				/>
 			)}
 		</Fragment>
-	) : (
-		<div />
 	);
 };
 

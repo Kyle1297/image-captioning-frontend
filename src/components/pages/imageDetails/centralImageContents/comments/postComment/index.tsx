@@ -97,7 +97,11 @@ const PostComment: React.FC = () => {
 	return image ? (
 		<Grid container justify='center' spacing={2} className={styles.root}>
 			<Grid item>
-				<UserAvatar user={user} userType={UserTypes.POSTER} />
+				<UserAvatar
+					user={user}
+					userType={UserTypes.POSTER}
+					noLink={user ? false : true}
+				/>
 			</Grid>
 			<Grid item xs>
 				<form onSubmit={handleFormSubmit}>
