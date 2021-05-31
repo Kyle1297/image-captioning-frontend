@@ -27,6 +27,12 @@ It is currently hosted on AWS using the following services:
 - CloudFront -> content delivery network (CDN) to host and cache static content from S3 and link the backend api and admin
 - CloudFormation -> infrastructure as code
 
+Feel free to review the above setup with the following AWS IAM guest read-only credientials:
+
+- Account ID: 396432430368
+- Username: Guest
+- Password: RuKU06^Nn[7tQt|
+
 ## Infrastructure and technologies
 
 ### Frontend
@@ -106,12 +112,15 @@ Then, run 'npm run deploy' to build and deploy the frontend to your S3 bucket. Y
 
 First, navigate to the prod/data/nginx/app.conf file and change all instances of 'techwithkyle.com' with your own domain. Next, run 'make prod-build' to build your backend containers, which can then be deployed to ECR. The 'aws ecr' commands in the provided Makefile will be helpful here.
 
-Then, use the provided guest IAM AWS account and above notes to correctly configure all the relevant AWS services, including CloudFront and ECS. Once deployed, your website should be accessible on the internet, at your specified domain, through HTTPS.
+Then, use the provided guest IAM AWS account and above notes to correctly configure all the relevant AWS services, including CloudFront and ECS. Note, if you choose to not use a load balancer (as I didn't), you will also need to configure HTTPS on your ECS EC2 server.
+
+To do so, first update the domain and email fields (lines 8-12) in the prod/init-letsencrypt.sh file and perform 'make scp-transfer' to transfer the related HTTPS files to your server. Next, login to your server with 'make ssh-login', update your server's packages, install docker-compose, and run './prod/init-letsencrypt.sh'. This will generate your domains' HTTPS certificates, which your server can then use. Assuming your server is up at the time of renewal, you will not need to do this again (the certbot container will auto-renew these certificates for you!).
+
+Once this is all done, you should be able to successfullly deploy your app at your specified domain through HTTPS!
 
 ## Features to come
 
 - Compress all images upon upload to S3 through lambda function
 - Train AI model on much larger database
-- Set-up guest read-only AWS IAM credentials for external users
 - Split Daphne to only handle websocket while gunicorn handles HTTP
 - More thorough testing
