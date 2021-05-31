@@ -27,7 +27,9 @@ It is currently hosted on AWS using the following services:
 - CloudFront -> content delivery network (CDN) to host and cache static content from S3 and link the backend api and admin
 - CloudFormation -> infrastructure as code
 
-Feel free to review the above setup with the following AWS IAM guest read-only credientials:
+### Read-only guest IAM credentials
+
+Feel free to review the above setup with the following AWS IAM guest read-only credentials:
 
 - Account ID: 396432430368
 - Username: Guest
