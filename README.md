@@ -89,7 +89,7 @@ For development, simply fork the frontend repository and perform "npm install" a
 
 Any changes to the dev database will not persist upon container restart. This is intentional to allow developers to be as disruptive as they like to the dev database without lasting consequences (perfect for development and testing).
 
-To set-up a dev database from pre-existing data, simply place a postgres sql backup file in the 'dev/db_db_backup/' folder, labeled as 'db_backup.sql'. This database file will then be used as the starting dev database on every container restart.
+To set-up a dev database from pre-existing data, simply place a postgres sql backup file in the 'dev/db_db_backup/' folder, labeled as 'db_backup.sql' (you can use the 'make pg_dump' command for this). This database file will then be used as the starting dev database on every container restart.
 
 #### Image upload and captioner
 
@@ -126,4 +126,7 @@ Once this is all done, you should be able to successfullly deploy your app at yo
 - Compress all images upon upload to S3 through lambda function
 - Train AI model on much larger database
 - Split Daphne to only handle websocket while gunicorn handles HTTP
+- Create CaptionAI's T&C page
+- Enable automatic emailing, including 'Forgot my password', using Celery and AWS SES
+- Setup social login/registration
 - More thorough testing
