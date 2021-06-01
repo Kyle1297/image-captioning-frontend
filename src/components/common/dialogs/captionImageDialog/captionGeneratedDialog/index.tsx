@@ -114,7 +114,7 @@ const CaptionGeneratedDialog: React.FC<Props> = ({
 	}, [dispatch, handleDialog, uploadError, createError]);
 
 	// handle failure to connect to websocket
-	const reconnectAttemptLimit = 5;
+	const reconnectAttemptLimit = 2;
 	const handleReconnectStop = (numAttempted: number) => {
 		if (numAttempted === reconnectAttemptLimit) {
 			dispatch(
@@ -219,7 +219,8 @@ const CaptionGeneratedDialog: React.FC<Props> = ({
 				) : (
 					<Skeleton
 						animation='wave'
-						variant='circle'
+						className={styles.image}
+						variant='rect'
 						width={width}
 						height={(image.height / image.width) * width}
 					/>
@@ -235,7 +236,9 @@ const CaptionGeneratedDialog: React.FC<Props> = ({
 					}
 				>
 					<Typography className={styles.caption} variant='body2'>
-						{image.caption.text}
+						{image.caption
+							? image.caption.text
+							: "There was an error retrieving the image's caption."}
 					</Typography>
 					<div>
 						<Typography className={styles.rate}>
