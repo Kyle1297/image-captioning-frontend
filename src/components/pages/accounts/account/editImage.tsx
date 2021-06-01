@@ -127,14 +127,14 @@ const EditImage: React.FC = () => {
 		<Fragment>
 			<input
 				className={styles.input}
-				id='input'
+				id='profile-input'
 				type='file'
 				accept='image/*'
 				required
 				onChange={handleImageUpload}
 				onClick={handleInputClick}
 			/>
-			<label htmlFor='input'>
+			<label htmlFor='profile-input'>
 				<Grid
 					container
 					justify='center'
