@@ -34,6 +34,7 @@ Feel free to review the above setup with the following AWS IAM guest read-only c
 - Account ID: 396432430368
 - Username: Guest
 - Password: RuKU06^Nn[7tQt|
+- Region: ap-southeast-2
 
 ## Infrastructure and technologies
 
