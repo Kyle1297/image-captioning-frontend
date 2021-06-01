@@ -101,7 +101,7 @@ const ImageResults: React.FC<Props> = ({
 									small={
 										relatedImages ? (smallScreen ? false : true) : undefined
 									}
-									removeHover={removeHover}
+									removeHover={relatedImages || removeHover}
 								/>
 							);
 						})}
