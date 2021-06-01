@@ -18,22 +18,21 @@ import {
 const API_SERVER = process.env.REACT_APP_API_SERVER + '/images/comments';
 
 // GET COMMENTS
-export const getComments = (
-	filters: CommentFilters,
-	newFilter: boolean = false
-) => (dispatch: Dispatch) => {
-	requestHelper({
-		dispatch: dispatch,
-		requestName: RequestEnums.getComments,
-		actionType: GET_COMMENTS,
-		requestConfig: {
-			url: `${API_SERVER}/`,
-			method: MethodTypes.GET,
-			params: filters,
-		},
-		newFilter: newFilter,
-	});
-};
+export const getComments =
+	(filters: CommentFilters, newFilter: boolean = false) =>
+	(dispatch: Dispatch) => {
+		requestHelper({
+			dispatch: dispatch,
+			requestName: RequestEnums.getComments,
+			actionType: GET_COMMENTS,
+			requestConfig: {
+				url: `${API_SERVER}/`,
+				method: MethodTypes.GET,
+				params: filters,
+			},
+			newFilter: newFilter,
+		});
+	};
 
 // GET COMMENT
 export const getComment = (id: number) => (dispatch: Dispatch) => {
@@ -64,21 +63,20 @@ export const createComment = (data: CommentPost) => (dispatch: Dispatch) => {
 };
 
 // UPDATE COMMENT
-export const updateComment = (id: number, data: CommentPatch) => (
-	dispatch: Dispatch
-) => {
-	requestHelper({
-		dispatch: dispatch,
-		requestName: RequestEnums.updateComment,
-		actionType: UPDATE_COMMENT,
-		requestConfig: {
-			url: `${API_SERVER}/${id}/`,
-			method: MethodTypes.PATCH,
-			data: data,
-		},
-		extraAction: SET_COMMENT_IN_COMMENTS,
-	});
-};
+export const updateComment =
+	(id: number, data: CommentPatch) => (dispatch: Dispatch) => {
+		requestHelper({
+			dispatch: dispatch,
+			requestName: RequestEnums.updateComment,
+			actionType: UPDATE_COMMENT,
+			requestConfig: {
+				url: `${API_SERVER}/${id}/`,
+				method: MethodTypes.PATCH,
+				data: data,
+			},
+			extraAction: SET_COMMENT_IN_COMMENTS,
+		});
+	};
 
 // REMOVE COMMENT
 export const removeComment = (id: number) => (dispatch: Dispatch) => {

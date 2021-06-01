@@ -159,7 +159,8 @@ export const uploadImage = (data: ImagePost) => (dispatch: Dispatch) => {
 
 // UPDATE IMAGE
 export const updateImage =
-	(uuid: string, data: ImagePatch) => (dispatch: Dispatch) => {
+	(uuid: string, data: ImagePatch) =>
+	(dispatch: Dispatch, getState: () => AppState) => {
 		requestHelper({
 			dispatch: dispatch,
 			requestName: RequestEnums.updateImage,
@@ -167,6 +168,7 @@ export const updateImage =
 			requestConfig: {
 				url: `${API_SERVER}/${uuid}/`,
 				method: MethodTypes.PATCH,
+				headers: authRequestHeaders(getState().auth.token),
 				data: data,
 			},
 			extraAction: SET_IMAGE_IN_IMAGES,
